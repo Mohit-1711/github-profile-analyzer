@@ -1,12 +1,11 @@
+import React from "react";
 import { useState } from "react";
-import { Moon, Sun } from "lucide-react";
+import { NavLink } from "react-router-dom";
+function SearchBar({ onSearch, darkMode}) {
+   
+  //onSearch is the fetchUser fxn
 
-function SearchBar({ onSearch, darkMode, setDarkMode }) { //onSearch is the fetchUser fxn
   const [username, setUsername] = useState("");
-
-  const themeChange = () => {
-    setDarkMode((prev) => !prev);
-  };
 
   function handleSearch() {
     if (username.trim() === "") return;
@@ -15,12 +14,10 @@ function SearchBar({ onSearch, darkMode, setDarkMode }) { //onSearch is the fetc
 
   return (
     <div
-      className={`w-full px-8 py-4 ${
-        darkMode ? "bg-gray-900 text-white" : "bg-gray-300 text-black"
-      }`}
+      className="w-full max-w-md"
     >
-      <div className="flex items-center justify-between">
-        {/* Search Bar */}
+        {/*------------------- Search Bar -----------------*/}
+
         <div className="flex items-center gap-3">
           <input
             type="text"
@@ -51,60 +48,6 @@ function SearchBar({ onSearch, darkMode, setDarkMode }) { //onSearch is the fetc
             Search
           </button>
         </div>
-
-        {/* Navbar */}
-        <nav>
-          <ul className="flex items-center gap-8">
-            <li>
-              <a
-                href="#home"
-                className={`transition ${
-                  darkMode ? "hover:text-blue-400" : "hover:text-blue-600"
-                }`}
-              >
-                Home
-              </a>
-            </li>
-
-            <li>
-              <a
-                href="#favourites"
-                className={`transition ${
-                  darkMode ? "hover:text-blue-400" : "hover:text-blue-600"
-                }`}
-              >
-                Favourites
-              </a>
-            </li>
-
-            <li>
-              <a
-                href="#recent"
-                className={`transition ${
-                  darkMode ? "hover:text-blue-400" : "hover:text-blue-600"
-                }`}
-              >
-                Recent Searches
-              </a>
-            </li>
-
-            <li>
-              <button
-                onClick={themeChange}
-                className={`p-2 rounded-full transition ${
-                  darkMode ? "hover:bg-gray-700" : "hover:bg-gray-200"
-                }`}
-              >
-                {darkMode ? (
-                  <Sun className="w-6 h-6 text-yellow-400" />
-                ) : (
-                  <Moon className="w-6 h-6 text-black" />
-                )}
-              </button>
-            </li>
-          </ul>
-        </nav>
-      </div>
     </div>
   );
 }

@@ -1,12 +1,27 @@
-import { useState } from 'react'
-import SearchBar from './SearchBar'
-import ProfileCard from './ProfileCard'
-import RepoList from './RepoList'
+import { Outlet } from "react-router-dom";
+import { useState, useEffect} from "react";
+import Header from "./components/Header";
+
 function App() {
-  const [userData, setUserData] = useState(null)
   const [darkMode, setDarkMode] = useState(true);
+  const [userData, setUserData] = useState(null)
   const [error, setError] = useState(null)
   const [repos, setRepos] = useState([])
+  
+  const [favourites, setFavourites] = useState(()=>{ //we are not using useState(localStorage.getItem("favourites")) 
+    //because we just want favourites to store the saved file only at the initialization of componnent and dont want to check localstorage at every render
+    const saved = localStorage.getItem("favourites");
+    return (saved) ? JSON.parse(saved) :[]
+    
+  })
+
+  // storing current favourite whenever the favourite changes(dependency)
+  useEffect(() => {
+  localStorage.setItem(
+    "favourites",
+    JSON.stringify(favourites)
+  );
+}, [favourites]);
 
   async function fetchUser(username) {
     const response = await fetch(`https://api.github.com/users/${username}`)
@@ -17,6 +32,13 @@ function App() {
       setUserData(null)
       return
     }
+    if(result.message === "Not Found") {
+      setError("User not found");
+      setUserData(null);
+      setRepos([]);
+      return;
+    }
+
     setError(null)
     
     setUserData(result);
@@ -27,50 +49,23 @@ function App() {
   }
 
   return (
-   <>
-   <div
-   
-  className={`min-h-screen ${
-    darkMode ? "bg-gray-950 text-white" : "bg-gray-50 text-black"
-  }`}
->
-  <SearchBar
-    onSearch={fetchUser} //passing fetchUser fxn as a parameter in searchBar fxn
-    darkMode={darkMode}
-    setDarkMode={setDarkMode}
-  />
-  
-  {error && <p className="text-red-500 text-center mt-4">{error}</p>}
-
-  {userData && (
-    <ProfileCard
-  darkMode={darkMode}
-  avatar={userData.avatar_url}
-  username={userData.login}
-  name={userData.name}
-  bio={userData.bio}
-  followers={userData.followers}
-  following={userData.following}
-  repos={userData.public_repos}
-  location={userData.location}
-  company={userData.company}
-  blog={userData.blog}
-  twitter={userData.twitter_username}
-  created={userData.created_at}
-  profile={userData.html_url}
-/>
-  )}
-
-  {userData && (<RepoList 
-  repos={repos}
-  darkMode={darkMode}
-  />)}
-
-  
-
-</div>
-   </>
-  )
-  
+    <>
+      <Header
+      darkMode = {darkMode}
+      setDarkMode= {setDarkMode}
+      onSearch = {fetchUser}
+      />
+      <Outlet context={{ 
+        darkMode,
+        setDarkMode,
+        userData,
+        repos,
+        error,
+        favourites,
+        setFavourites
+        }} />
+    </>
+  );
 }
-export default App
+
+export default App;
