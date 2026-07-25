@@ -98,7 +98,7 @@ function ProfileCard({
           </div>
 
           <a
-            href={userData.profile}
+            href={userData.html_url}
             target="_blank"
             rel="noreferrer"
             className="inline-block mt-8 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
